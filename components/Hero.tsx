@@ -62,12 +62,18 @@ export default function Hero() {
         }}
       />
 
-      {/* 3D Scene Container - Add your embed here */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        {/* Placeholder for 3D embed (Sketchfab or similar) */}
-        <div className="w-full h-full max-w-2xl max-h-96 flex items-center justify-center">
-          {/* Your 3D embed or image goes here */}
-        </div>
+      {/* 3D Scene Container */}
+      <div className="absolute inset-0 flex items-center justify-center opacity-70">
+        <iframe
+          title="YCreatives 3D Hero"
+          frameBorder="0"
+          allowFullScreen
+          mozAllowFullScreen="true"
+          webkitAllowFullscreen="true"
+          allow="autoplay; fullscreen; xr-spatial-tracking"
+          src="https://sketchfab.com/models/9ddbeee69a3442eb842f2003dacfb259/embed?autostart=1&ui_infos=0&ui_controls=0&ui_stop=0&ui_watermark=0&ui_theme=dark&camera=0&autospin=0.3&transparent=0&preload=1"
+          className="w-full h-full"
+        />
       </div>
 
       {/* Content */}
