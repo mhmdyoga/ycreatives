@@ -62,9 +62,12 @@ export default function Hero() {
         }}
       />
 
-      {/* 3D Scene Container (Sketchfab Placeholder) */}
-      <div className="absolute inset-0 flex items-center justify-center opacity-20">
-        <div className="w-96 h-96 rounded-full bg-gradient-to-br from-gray-200 to-gray-100 blur-3xl animate-pulse" />
+      {/* 3D Scene Container - Add your embed here */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        {/* Placeholder for 3D embed (Sketchfab or similar) */}
+        <div className="w-full h-full max-w-2xl max-h-96 flex items-center justify-center">
+          {/* Your 3D embed or image goes here */}
+        </div>
       </div>
 
       {/* Content */}
