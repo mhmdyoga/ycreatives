@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>YCreatives — Creative Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#e8e6e1;
+  --fg:#0a0a0a;
+  --fg2:#3a3a3a;
+  --accent:#e8c547;
+  --muted:#888;
+  --card-bg:rgba(255,255,255,0.7);
+  --border:rgba(0,0,0,0.08);
+}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{background:var(--bg);color:var(--fg);font-family:'DM Sans',sans-serif;cursor:none;overflow-x:hidden}
+
+/* CURSOR */
+#cur{position:fixed;width:10px;height:10px;background:var(--fg);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .15s,height .15s,background .15s,transform .1s}
+#cur-ring{position:fixed;width:32px;height:32px;border:1.5px solid rgba(10,10,10,0.3);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%)}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:500;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:24px 48px;
+  transition:background .4s,backdrop-filter .4s,border-bottom .4s;
+}
+nav.scrolled{
+  background:rgba(232,230,225,0.85);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);
+}
+.nav-label{
+  font-size:12px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--fg2);display:flex;align-items:center;gap:8px;
+}
+.nav-label::before{content:'|';color:var(--muted)}
+.nav-logo{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:20px;
+  letter-spacing:-.5px;color:var(--fg);text-decoration:none;
+}
+.nav-logo span{color:#c8a020}
+.nav-right{display:flex;align-items:center;gap:32px}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{
+  font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--fg2);text-decoration:none;transition:color .25s;
+}
+.nav-links a:hover{color:var(--fg)}
+.nav-cta{
+  font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+  background:var(--fg);color:#fff;
+  padding:10px 22px;border-radius:100px;
+  text-decoration:none;transition:background .25s,transform .2s;
+}
+.nav-cta:hover{background:#333;transform:scale(1.03)}
+
+/* ===== HERO ===== */
+#hero{
+  position:relative;height:100vh;min-height:700px;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-template-rows:1fr;
+}
+
+/* 3D Sketchfab fills entire hero */
+.hero-3d{
+  position:absolute;inset:0;z-index:0;
+}
+.hero-3d iframe{
+  width:100%;height:100%;border:none;
+  /* Dark overlay + desaturate so it feels like the reference photo */
+  filter:brightness(.72) contrast(1.1) grayscale(.15);
+}
+/* gradient vignette so text areas are legible */
+.hero-3d::after{
+  content:'';position:absolute;inset:0;
+  background:
+    linear-gradient(to right, rgba(232,230,225,.82) 0%, rgba(232,230,225,.35) 42%, rgba(232,230,225,0) 60%),
+    linear-gradient(to top, rgba(232,230,225,.7) 0%, transparent 30%);
+}
+
+/* LEFT — big headline */
+.hero-left{
+  position:relative;z-index:10;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:0 0 80px 48px;
+  max-width:580px;
+}
+.hero-tag{
+  font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--fg2);margin-bottom:18px;
+  display:flex;align-items:center;gap:8px;
+  opacity:0;transform:translateY(20px);
+}
+.hero-tag::before{content:'';width:24px;height:1px;background:var(--fg2)}
+.hero-h1{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(52px,7.5vw,108px);
+  font-weight:800;line-height:.93;
+  letter-spacing:-3px;
+  color:var(--fg);
+}
+.hero-h1 .word{
+  display:inline-block;overflow:hidden;
+  /* wrap each word */
+}
+.hero-h1 .line{display:block;overflow:hidden}
+.hero-h1 .inner{display:block;transform:translateY(110%)}
+.hero-h1 em{font-style:normal;color:#b8920a}
+.hero-sub{
+  max-width:340px;font-size:14px;line-height:1.75;
+  color:var(--fg2);margin-top:24px;
+  opacity:0;transform:translateY(16px);
+}
+.hero-actions{
+  display:flex;gap:12px;margin-top:28px;
+  opacity:0;transform:translateY(16px);
+}
+.btn-dark{
+  background:var(--fg);color:#fff;
+  padding:13px 28px;border-radius:100px;
+  font-size:13px;font-weight:500;text-decoration:none;
+  display:flex;align-items:center;gap:8px;
+  transition:background .25s,transform .2s;
+}
+.btn-dark:hover{background:#2a2a2a;transform:translateY(-2px)}
+.btn-ghost{
+  background:rgba(255,255,255,.5);
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(0,0,0,.12);
+  color:var(--fg);padding:13px 28px;border-radius:100px;
+  font-size:13px;text-decoration:none;
+  transition:background .25s;
+}
+.btn-ghost:hover{background:rgba(255,255,255,.75)}
+
+/* star rating + customers */
+.hero-social{
+  display:flex;align-items:center;gap:10px;margin-top:20px;
+  opacity:0;
+}
+.stars{color:#e8a020;font-size:14px;letter-spacing:1px}
+.hero-social span{font-size:13px;color:var(--fg2)}
+
+/* RIGHT — floating info card */
+.hero-right{
+  position:relative;z-index:10;
+  display:flex;align-items:flex-start;justify-content:flex-end;
+  padding:100px 48px 0 0;
+}
+.info-card{
+  background:rgba(240,238,233,0.78);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.6);
+  border-radius:20px;
+  padding:20px;
+  width:280px;
+  box-shadow:0 8px 40px rgba(0,0,0,.08);
+  opacity:0;transform:translateY(24px) scale(.97);
+}
+.card-thumb{
+  width:56px;height:56px;border-radius:12px;
+  background:#0a0a0a;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:#e8c547;
+}
+.card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
+.card-step{font-size:11px;color:var(--muted);letter-spacing:.1em}
+.card-icon-btn{
+  width:28px;height:28px;border-radius:50%;
+  background:rgba(0,0,0,.06);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;color:var(--muted);cursor:pointer;
+}
+.card-title{
+  font-family:'Syne',sans-serif;font-size:24px;font-weight:700;
+  line-height:1.15;letter-spacing:-.5px;color:var(--fg);
+  margin-top:8px;
+}
+.card-divider{
+  height:1px;background:rgba(0,0,0,.08);margin:16px 0;
+  position:relative;
+}
+.card-divider::after{
+  content:'';position:absolute;left:0;top:0;
+  width:40%;height:1px;background:rgba(0,0,0,.25);
+}
+.card-nav{display:flex;gap:8px;margin-top:4px}
+.card-nav-btn{
+  width:30px;height:30px;border-radius:50%;
+  border:1px solid rgba(0,0,0,.12);
+  background:rgba(255,255,255,.5);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;cursor:pointer;color:var(--fg2);
+  transition:background .2s;
+}
+.card-nav-btn:hover{background:rgba(255,255,255,.9)}
+
+/* partners area */
+.hero-partners{
+  position:absolute;right:48px;bottom:120px;z-index:10;
+  text-align:right;opacity:0;
+}
+.partners-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.partner-row{display:flex;gap:20px;justify-content:flex-end;align-items:center;margin-bottom:8px}
+.partner-name{
+  font-family:'Syne',sans-serif;font-size:13px;font-weight:600;
+  color:rgba(10,10,10,.45);
+  display:flex;align-items:center;gap:5px;
+}
+.partner-name::before{content:'⬡';font-size:10px;opacity:.5}
+
+/* bottom bar */
+.hero-bottom{
+  position:absolute;bottom:0;left:0;right:0;z-index:10;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:16px 48px;
+  border-top:1px solid rgba(0,0,0,.08);
+  background:rgba(232,230,225,.4);
+  backdrop-filter:blur(12px);
+  opacity:0;
+}
+.hero-bottom-item{
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--fg2);display:flex;align-items:center;gap:6px;
+}
+.hero-bottom-item::before{content:'•';color:var(--muted)}
+
+/* big bg text */
+.hero-wordmark{
+  position:absolute;bottom:52px;left:50%;transform:translateX(-50%);
+  z-index:5;
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:clamp(80px,14vw,200px);
+  letter-spacing:-4px;
+  color:transparent;
+  -webkit-text-stroke:1px rgba(10,10,10,.08);
+  white-space:nowrap;pointer-events:none;
+  opacity:0;
+}
+
+/* ===== MARQUEE ===== */
+.marquee-wrap{
+  position:relative;z-index:2;
+  padding:14px 0;
+  border-top:1px solid rgba(0,0,0,.08);
+  border-bottom:1px solid rgba(0,0,0,.08);
+  overflow:hidden;background:rgba(232,230,225,1);
+}
+.marquee-track{
+  display:flex;white-space:nowrap;
+  animation:marquee 22s linear infinite;
+}
+.marquee-item{
+  padding:0 36px;
+  font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(10,10,10,.4);
+  display:flex;align-items:center;gap:10px;
+}
+.marquee-item b{color:var(--fg);font-weight:600}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* ===== ABOUT ===== */
+#about{
+  padding:140px 48px;
+  display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;
+  background:var(--bg);
+}
+.about-left .section-label{
+  font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:20px;display:flex;align-items:center;gap:10px;
+}
+.about-left .section-label::before{content:'';width:24px;height:1px;background:var(--muted)}
+.about-heading{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(36px,4.5vw,58px);
+  font-weight:800;line-height:1.05;letter-spacing:-1.5px;
+}
+.about-heading em{font-style:normal;color:#b8920a}
+.about-right p{
+  font-size:15px;line-height:1.8;color:var(--fg2);margin-bottom:20px;
+}
+.about-highlight{
+  font-family:'Syne',sans-serif;font-size:18px;font-weight:700;
+  color:var(--fg);border-left:3px solid #c8a020;
+  padding-left:20px;margin-bottom:24px;line-height:1.4;
+}
+.about-stats{display:flex;gap:40px;margin-top:40px}
+.astat-num{font-family:'Syne',sans-serif;font-size:40px;font-weight:800;color:var(--fg)}
+.astat-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+
+/* ===== SERVICES ===== */
+#services{padding:140px 48px;background:#f0ede8}
+.services-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:60px}
+.section-label{
+  font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:12px;
+  display:flex;align-items:center;gap:10px;
+}
+.section-label::before{content:'';width:24px;height:1px;background:var(--muted)}
+.services-header h2{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(36px,4vw,52px);
+  font-weight:800;letter-spacing:-1.5px;line-height:1;
+}
+.services-desc{font-size:14px;color:var(--muted);max-width:220px;line-height:1.7}
+.services-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px}
+.svc-card{
+  background:#fff;padding:52px 44px;
+  position:relative;overflow:hidden;cursor:pointer;
+  transition:background .35s;
+}
+.svc-card:hover{background:#fafaf8}
+.svc-card::after{
+  content:'';position:absolute;
+  bottom:0;left:0;right:0;height:2px;
+  background:linear-gradient(to right,#c8a020,transparent);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .5s cubic-bezier(.16,1,.3,1);
+}
+.svc-card:hover::after{transform:scaleX(1)}
+.svc-num{
+  font-family:'Syne',sans-serif;font-size:11px;
+  letter-spacing:.2em;color:rgba(10,10,10,.2);margin-bottom:28px;
+}
+.svc-emoji{font-size:32px;display:block;margin-bottom:20px;line-height:1}
+.svc-title{
+  font-family:'Syne',sans-serif;font-size:22px;font-weight:700;
+  letter-spacing:-.3px;margin-bottom:14px;color:var(--fg);
+}
+.svc-desc{font-size:13px;line-height:1.75;color:rgba(10,10,10,.5)}
+.svc-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:24px}
+.stag{
+  font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(10,10,10,.35);
+  border:1px solid rgba(10,10,10,.1);
+  padding:4px 12px;border-radius:100px;
+  transition:all .3s;
+}
+.svc-card:hover .stag{border-color:rgba(200,160,32,.4);color:#a07010}
+.svc-arrow{
+  position:absolute;top:44px;right:40px;
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(10,10,10,.04);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;color:var(--muted);
+  transform:rotate(-45deg);
+  transition:all .3s;
+}
+.svc-card:hover .svc-arrow{background:var(--fg);color:#fff;transform:rotate(0deg)}
+
+/* ===== WORK ===== */
+#work{padding:140px 48px;background:var(--bg)}
+#work .work-top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:48px}
+#work h2{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(36px,4vw,52px);
+  font-weight:800;letter-spacing:-1.5px;
+}
+#work .view-all{
+  font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--fg2);text-decoration:none;
+  display:flex;align-items:center;gap:8px;
+  transition:gap .25s;
+}
+#work .view-all:hover{gap:14px}
+.work-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:3px}
+.witem{position:relative;overflow:hidden;cursor:pointer;aspect-ratio:1/.9}
+.witem:first-child{grid-row:span 2;aspect-ratio:auto}
+.wbg{
+  position:absolute;inset:0;
+  transition:transform .7s cubic-bezier(.16,1,.3,1);
+}
+.witem:hover .wbg{transform:scale(1.07)}
+.wbg-1{background:linear-gradient(145deg,#c8d8e8 0%,#8aaabb 100%)}
+.wbg-2{background:linear-gradient(145deg,#e8d8c0 0%,#c8a878 100%)}
+.wbg-3{background:linear-gradient(145deg,#d0d8c0 0%,#9aaa88 100%)}
+.wbg-4{background:linear-gradient(145deg,#e0d0d8 0%,#b898a8 100%)}
+.witem-inner{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  justify-content:space-between;padding:28px;
+}
+.witem-num{
+  font-family:'Syne',sans-serif;font-size:11px;
+  letter-spacing:.15em;color:rgba(10,10,10,.3);
+}
+.witem-label h3{
+  font-family:'Syne',sans-serif;font-size:20px;font-weight:700;
+  color:rgba(10,10,10,.85);letter-spacing:-.3px;
+}
+.witem-label p{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:rgba(10,10,10,.4);margin-top:4px}
+.witem-large-text{
+  position:absolute;bottom:-10px;left:20px;
+  font-family:'Syne',sans-serif;font-size:80px;font-weight:800;
+  color:rgba(255,255,255,.12);pointer-events:none;
+  letter-spacing:-2px;line-height:1;
+}
+
+/* ===== PROCESS ===== */
+#process{padding:140px 48px;background:#f0ede8}
+#process h2{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(36px,4vw,52px);
+  font-weight:800;letter-spacing:-1.5px;margin-bottom:56px;
+}
+.process-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px}
+.pstep{
+  padding:44px 36px;
+  background:#fff;position:relative;
+  border-top:2px solid transparent;
+  transition:border-color .3s;cursor:default;
+}
+.pstep:hover{border-color:#c8a020}
+.pstep-num{
+  font-family:'Syne',sans-serif;font-size:52px;font-weight:800;
+  color:rgba(10,10,10,.06);line-height:1;margin-bottom:28px;
+}
+.pstep-title{
+  font-family:'Syne',sans-serif;font-size:17px;font-weight:700;
+  color:var(--fg);margin-bottom:12px;
+}
+.pstep-desc{font-size:13px;line-height:1.75;color:rgba(10,10,10,.45)}
+
+/* ===== CTA ===== */
+#cta{
+  padding:180px 48px;text-align:center;
+  background:var(--fg);color:#f0ede6;
+  position:relative;overflow:hidden;
+}
+#cta::before{
+  content:'YCREATIVES';
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-family:'Syne',sans-serif;font-size:clamp(80px,14vw,200px);
+  font-weight:800;letter-spacing:-4px;
+  color:rgba(255,255,255,.03);white-space:nowrap;pointer-events:none;
+}
+.cta-label{
+  font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(240,237,230,.4);margin-bottom:24px;
+}
+#cta h2{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(48px,7vw,88px);
+  font-weight:800;letter-spacing:-2px;line-height:.95;
+  margin-bottom:28px;
+}
+#cta h2 em{font-style:normal;color:#e8c547}
+#cta p{
+  font-size:16px;color:rgba(240,237,230,.5);
+  max-width:420px;margin:0 auto 48px;line-height:1.75;
+}
+.cta-email{
+  display:inline-flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12);
+  color:#f0ede6;padding:16px 36px;border-radius:100px;
+  font-size:15px;text-decoration:none;
+  transition:background .3s,transform .2s;
+}
+.cta-email:hover{background:rgba(255,255,255,.14);transform:translateY(-2px)}
+
+/* ===== FOOTER ===== */
+footer{
+  padding:40px 48px;
+  border-top:1px solid rgba(10,10,10,.08);
+  display:flex;justify-content:space-between;align-items:center;
+  background:#e8e6e1;
+}
+.footer-logo{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:18px;
+  text-decoration:none;color:var(--fg);
+}
+.footer-logo span{color:#b8920a}
+.footer-links{display:flex;gap:28px;list-style:none}
+.footer-links a{
+  font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);text-decoration:none;transition:color .25s;
+}
+.footer-links a:hover{color:var(--fg)}
+.footer-copy{font-size:11px;color:rgba(10,10,10,.3);letter-spacing:.05em}
+
+/* GSAP initial states */
+.reveal{opacity:0;transform:translateY(36px)}
+.reveal-left{opacity:0;transform:translateX(-36px)}
+.reveal-right{opacity:0;transform:translateX(36px)}
+.reveal-scale{opacity:0;transform:scale(.96)}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-ring"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-label">Creative Agency</div>
+  <a href="#" class="nav-logo">Y<span>Creatives</span></a>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#process">Process</a></li>
+    </ul>
+    <a href="#cta" class="nav-cta">Let's Talk</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+
+  <!-- Sketchfab 3D embed fullscreen bg -->
+  <div class="hero-3d">
+    <iframe
+      title="YCreatives 3D Hero"
+      frameborder="0"
+      allowfullscreen
+      mozallowfullscreen="true"
+      webkitallowfullscreen="true"
+      allow="autoplay; fullscreen; xr-spatial-tracking"
+      src="https://sketchfab.com/models/9ddbeee69a3442eb842f2003dacfb259/embed?autostart=1&ui_infos=0&ui_controls=0&ui_stop=0&ui_watermark=0&ui_theme=dark&camera=0&autospin=0.3&transparent=0&preload=1">
+    </iframe>
+  </div>
+
+  <!-- Big background wordmark -->
+  <div class="hero-wordmark" id="hero-wordmark">YCREATIVES</div>
+
+  <!-- LEFT headline -->
+  <div class="hero-left">
+    <p class="hero-tag" id="hero-tag">Creative Studio — Tangerang</p>
+    <h1 class="hero-h1" id="hero-h1">
+      <span class="line"><span class="inner">We start from</span></span>
+      <span class="line"><span class="inner">zero, <em>delivering</em></span></span>
+      <span class="line"><span class="inner">only what <em>matters.</em></span></span>
+    </h1>
+    <p class="hero-sub" id="hero-sub">Apps, ads video, brand photography, and graphic design — crafted to make your audience feel something.</p>
+    <div class="hero-actions" id="hero-actions">
+      <a href="#work" class="btn-dark">View Our Work →</a>
+      <a href="#services" class="btn-ghost">Our Services</a>
+    </div>
+    <div class="hero-social" id="hero-social">
+      <span class="stars">★★★★★</span>
+      <span>3000+ Customers</span>
+    </div>
+  </div>
+
+  <!-- RIGHT floating card -->
+  <div class="hero-right">
+    <div class="info-card" id="info-card">
+      <div class="card-header">
+        <div class="card-thumb">Y</div>
+        <div style="text-align:right">
+          <div class="card-step">01</div>
+          <div class="card-icon-btn">⊕</div>
+        </div>
+      </div>
+      <div class="card-title">Design to<br>explore.</div>
+      <div class="card-divider"></div>
+      <div class="card-nav">
+        <button class="card-nav-btn">←</button>
+        <button class="card-nav-btn">→</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Partners -->
+  <div class="hero-partners" id="hero-partners">
+    <p class="partners-label">Our Partners</p>
+    <div class="partner-row">
+      <span class="partner-name">Sneakers.co</span>
+      <span class="partner-name">Mantappu Corp</span>
+      <span class="partner-name">Wager</span>
+    </div>
+    <div class="partner-row">
+      <span class="partner-name">Crona</span>
+      <span class="partner-name">Mercury</span>
+      <span class="partner-name">Crona</span>
+    </div>
+  </div>
+
+  <!-- Bottom bar -->
+  <div class="hero-bottom" id="hero-bottom">
+    <span class="hero-bottom-item">10+ Years Exp</span>
+    <span class="hero-bottom-item">Based in Tangerang</span>
+    <span class="hero-bottom-item">Scroll Down</span>
+  </div>
+
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="marquee-item">✦&nbsp;<b>App Development</b></span>
+    <span class="marquee-item">✦&nbsp;<b>Ads Video</b></span>
+    <span class="marquee-item">✦&nbsp;<b>Brand Photography</b></span>
+    <span class="marquee-item">✦&nbsp;<b>Graphic Design</b></span>
+    <span class="marquee-item">✦&nbsp;<b>Mobile App</b></span>
+    <span class="marquee-item">✦&nbsp;<b>UI / UX Design</b></span>
+    <span class="marquee-item">✦&nbsp;<b>Motion Graphics</b></span>
+    <span class="marquee-item">✦&nbsp;<b>App Development</b></span>
+    <span class="marquee-item">✦&nbsp;<b>Ads Video</b></span>
+    <span class="marquee-item">✦&nbsp;<b>Brand Photography</b></span>
+    <span class="marquee-item">✦&nbsp;<b>Graphic Design</b></span>
+    <span class="marquee-item">✦&nbsp;<b>Mobile App</b></span>
+    <span class="marquee-item">✦&nbsp;<b>UI / UX Design</b></span>
+    <span class="marquee-item">✦&nbsp;<b>Motion Graphics</b></span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-left">
+    <p class="section-label">About Us</p>
+    <h2 class="about-heading reveal">We don't just<br>make things.<br>We make <em>impressions.</em></h2>
+    <div class="about-stats reveal">
+      <div>
+        <div class="astat-num">80+</div>
+        <div class="astat-label">Projects</div>
+      </div>
+      <div>
+        <div class="astat-num">5yr</div>
+        <div class="astat-label">Experience</div>
+      </div>
+      <div>
+        <div class="astat-num">100%</div>
+        <div class="astat-label">Committed</div>
+      </div>
+    </div>
+  </div>
+  <div class="about-right reveal-right">
+    <p class="about-highlight">A full-service creative studio obsessed with quality and results.</p>
+    <p>From building sleek digital products to shooting campaigns that convert — we bring together technology, storytelling, and design to deliver work that punches above its weight.</p>
+    <p>YCreatives was built on one belief: great creative work shouldn't be reserved for corporations with giant budgets. Every ambitious brand deserves world-class output.</p>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="services-header">
+    <div>
+      <p class="section-label">What We Do</p>
+      <h2 class="reveal">Our<br>Services</h2>
+    </div>
+    <p class="services-desc reveal">Everything you need to build a brand people genuinely remember.</p>
+  </div>
+  <div class="services-grid">
+    <div class="svc-card reveal">
+      <div class="svc-num">01</div>
+      <div class="svc-arrow">→</div>
+      <span class="svc-emoji">📱</span>
+      <h3 class="svc-title">App Development</h3>
+      <p class="svc-desc">We build web and mobile applications from scratch — fast, scalable, and beautifully designed. From MVP to full product launch, we handle everything end-to-end.</p>
+      <div class="svc-tags">
+        <span class="stag">React Native</span>
+        <span class="stag">Next.js</span>
+        <span class="stag">Flutter</span>
+        <span class="stag">UI/UX</span>
+      </div>
+    </div>
+    <div class="svc-card reveal">
+      <div class="svc-num">02</div>
+      <div class="svc-arrow">→</div>
+      <span class="svc-emoji">🎬</span>
+      <h3 class="svc-title">Ads Video</h3>
+      <p class="svc-desc">High-impact video production for commercials, social media campaigns, and brand storytelling. Concepts that convert — cinematography that captivates.</p>
+      <div class="svc-tags">
+        <span class="stag">TVC</span>
+        <span class="stag">Reels</span>
+        <span class="stag">Motion</span>
+        <span class="stag">Concept</span>
+      </div>
+    </div>
+    <div class="svc-card reveal">
+      <div class="svc-num">03</div>
+      <div class="svc-arrow">→</div>
+      <span class="svc-emoji">📸</span>
+      <h3 class="svc-title">Brand Photography</h3>
+      <p class="svc-desc">Product and lifestyle photography art-directed to align with your brand identity. Every frame crafted to sell — and to tell your story beautifully.</p>
+      <div class="svc-tags">
+        <span class="stag">Product</span>
+        <span class="stag">Lifestyle</span>
+        <span class="stag">Editorial</span>
+        <span class="stag">Retouching</span>
+      </div>
+    </div>
+    <div class="svc-card reveal">
+      <div class="svc-num">04</div>
+      <div class="svc-arrow">→</div>
+      <span class="svc-emoji">🎨</span>
+      <h3 class="svc-title">Graphic Design</h3>
+      <p class="svc-desc">Visual systems, packaging, social media creatives, and ad materials. Designs that build your brand identity and stop thumbs mid-scroll on every platform.</p>
+      <div class="svc-tags">
+        <span class="stag">Branding</span>
+        <span class="stag">Packaging</span>
+        <span class="stag">Social</span>
+        <span class="stag">Print</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORK -->
+<section id="work">
+  <div class="work-top">
+    <div>
+      <p class="section-label">Selected Work</p>
+      <h2 class="reveal">Projects We're<br>Proud Of</h2>
+    </div>
+    <a href="#" class="view-all reveal">View All Work →</a>
+  </div>
+  <div class="work-grid">
+    <div class="witem reveal-scale">
+      <div class="wbg wbg-1"></div>
+      <div class="witem-inner">
+        <span class="witem-num">01</span>
+        <div class="witem-label">
+          <h3>NutriFast App</h3>
+          <p>Mobile App · UI/UX</p>
+        </div>
+      </div>
+      <span class="witem-large-text">APP</span>
+    </div>
+    <div class="witem reveal-scale">
+      <div class="wbg wbg-2"></div>
+      <div class="witem-inner">
+        <span class="witem-num">02</span>
+        <div class="witem-label">
+          <h3>Glow Skincare</h3>
+          <p>Ads Video · Campaign</p>
+        </div>
+      </div>
+      <span class="witem-large-text">VID</span>
+    </div>
+    <div class="witem reveal-scale">
+      <div class="wbg wbg-3"></div>
+      <div class="witem-inner">
+        <span class="witem-num">03</span>
+        <div class="witem-label">
+          <h3>Kopi Hitam</h3>
+          <p>Brand Photography</p>
+        </div>
+      </div>
+      <span class="witem-large-text">PHO</span>
+    </div>
+    <div class="witem reveal-scale">
+      <div class="wbg wbg-4"></div>
+      <div class="witem-inner">
+        <span class="witem-num">04</span>
+        <div class="witem-label">
+          <h3>Aurelia Brand</h3>
+          <p>Graphic Design · Identity</p>
+        </div>
+      </div>
+      <span class="witem-large-text">DSN</span>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <p class="section-label">How We Work</p>
+  <h2 class="reveal">Our Process</h2>
+  <div class="process-grid">
+    <div class="pstep reveal">
+      <div class="pstep-num">01</div>
+      <h3 class="pstep-title">Discovery</h3>
+      <p class="pstep-desc">We deep-dive into your brand, audience, and business goals. No guesswork — only clarity before any creative work begins.</p>
+    </div>
+    <div class="pstep reveal">
+      <div class="pstep-num">02</div>
+      <h3 class="pstep-title">Strategy</h3>
+      <p class="pstep-desc">We build a creative strategy aligned with your business objectives — and positioned to stand out from your competitors.</p>
+    </div>
+    <div class="pstep reveal">
+      <div class="pstep-num">03</div>
+      <h3 class="pstep-title">Execution</h3>
+      <p class="pstep-desc">Our team builds, shoots, and designs with relentless attention to detail — delivered on time, every single time.</p>
+    </div>
+    <div class="pstep reveal">
+      <div class="pstep-num">04</div>
+      <h3 class="pstep-title">Launch</h3>
+      <p class="pstep-desc">We hand over final assets and stay by your side through launch — making sure every deliverable lands with maximum impact.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <p class="cta-label reveal">Start a Project</p>
+  <h2 class="reveal">Ready to<br>make <em>noise?</em></h2>
+  <p class="reveal">Drop us a message and let's figure out how we can turn your vision into something the world actually pays attention to.</p>
+  <a href="mailto:hello@ycreatives.id" class="cta-email reveal">hello@ycreatives.id →</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <a href="#" class="footer-logo">Y<span>Creatives</span></a>
+  <ul class="footer-links">
+    <li><a href="#">Instagram</a></li>
+    <li><a href="#">Behance</a></li>
+    <li><a href="#">LinkedIn</a></li>
+    <li><a href="#">WhatsApp</a></li>
+  </ul>
+  <p class="footer-copy">© 2025 YCreatives. All rights reserved.</p>
+</footer>
+
+<script>
+// ===================== CURSOR =====================
+const cur = document.getElementById('cur');
+const ring = document.getElementById('cur-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX; my=e.clientY;
+  cur.style.left=mx+'px'; cur.style.top=my+'px';
+});
+(function tick(){
+  rx+=(mx-rx)*.1; ry+=(my-ry)*.1;
+  ring.style.left=rx+'px'; ring.style.top=ry+'px';
+  requestAnimationFrame(tick);
+})();
+document.querySelectorAll('a,button,.svc-card,.witem').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{
+    cur.style.width='18px'; cur.style.height='18px';
+    cur.style.background='#c8a020';
+    ring.style.width='52px'; ring.style.height='52px';
+  });
+  el.addEventListener('mouseleave',()=>{
+    cur.style.width='10px'; cur.style.height='10px';
+    cur.style.background='var(--fg)';
+    ring.style.width='32px'; ring.style.height='32px';
+  });
+});
+
+// ===================== GSAP =====================
+gsap.registerPlugin(ScrollTrigger);
+
+// HERO entrance
+const tl = gsap.timeline({delay:.3});
+tl.to('#hero-tag',        {opacity:1,y:0,duration:.9,ease:'power3.out'})
+  .to('.hero-h1 .inner',  {y:'0%',stagger:.13,duration:1.1,ease:'power4.out'},'-.5')
+  .to('#hero-sub',        {opacity:1,y:0,duration:.8,ease:'power3.out'},'-.6')
+  .to('#hero-actions',    {opacity:1,y:0,duration:.8,ease:'power3.out'},'-.5')
+  .to('#hero-social',     {opacity:1,duration:.6},'-.4')
+  .to('#info-card',       {opacity:1,y:0,scale:1,duration:1,ease:'power3.out'},'-.8')
+  .to('#hero-partners',   {opacity:1,duration:.8,ease:'power3.out'},'-.5')
+  .to('#hero-bottom',     {opacity:1,duration:.6},'-.4')
+  .to('#hero-wordmark',   {opacity:1,duration:1.2},'-.8');
+
+// Scroll reveals
+gsap.utils.toArray('.reveal').forEach(el=>{
+  gsap.to(el,{
+    opacity:1,y:0,duration:.85,ease:'power3.out',
+    scrollTrigger:{trigger:el,start:'top 88%'}
+  });
+});
+gsap.utils.toArray('.reveal-left').forEach(el=>{
+  gsap.to(el,{opacity:1,x:0,duration:.85,ease:'power3.out',
+    scrollTrigger:{trigger:el,start:'top 88%'}});
+});
+gsap.utils.toArray('.reveal-right').forEach(el=>{
+  gsap.to(el,{opacity:1,x:0,duration:.85,ease:'power3.out',
+    scrollTrigger:{trigger:el,start:'top 88%'}});
+});
+gsap.utils.toArray('.reveal-scale').forEach((el,i)=>{
+  gsap.to(el,{opacity:1,scale:1,duration:.9,ease:'power3.out',delay:i*.06,
+    scrollTrigger:{trigger:el,start:'top 90%'}});
+});
+
+// Nav on scroll
+ScrollTrigger.create({
+  start:'top -60',
+  onUpdate(self){
+    document.getElementById('navbar').classList.toggle('scrolled',self.progress>0);
+  }
+});
+
+// Parallax hero wordmark
+gsap.to('#hero-wordmark',{
+  yPercent:-30,
+  ease:'none',
+  scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:true}
+});
+
+// Tilt cards on mouse
+document.querySelectorAll('.svc-card').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    const x=(e.clientX-r.left)/r.width-.5;
+    const y=(e.clientY-r.top)/r.height-.5;
+    gsap.to(card,{rotateY:x*6,rotateX:-y*4,transformPerspective:800,duration:.4,ease:'power2.out'});
+  });
+  card.addEventListener('mouseleave',()=>{
+    gsap.to(card,{rotateY:0,rotateX:0,duration:.6,ease:'power2.out'});
+  });
+});
+
+// ===== PROCESS SECTION ANIMATIONS =====
+gsap.registerPlugin(ScrollTrigger);
+
+const processSection = document.querySelector('#process');
+if (processSection) {
+  // Animate process heading
+  const processHeading = processSection.querySelector('h2');
+  if (processHeading) {
+    gsap.to(processHeading, {
+      scrollTrigger: {
+        trigger: processSection,
+        start: 'top 70%',
+        once: true,
+      },
+      opacity: 1,
+      y: 0,
+      duration: 0.8,
+      ease: 'power3.out',
+    });
+  }
+
+  // Animate process steps with stagger
+  const steps = processSection.querySelectorAll('.pstep');
+  
+  steps.forEach((step, index) => {
+    // Initial state
+    gsap.set(step, {
+      opacity: 0,
+      y: 30,
+    });
+
+    // Animate in on scroll
+    gsap.to(step, {
+      scrollTrigger: {
+        trigger: processSection,
+        start: 'top 65%',
+        once: true,
+      },
+      opacity: 1,
+      y: 0,
+      duration: 0.6,
+      delay: index * 0.1,
+      ease: 'power2.out',
+    });
+
+    // Enhanced hover effect with animation
+    step.addEventListener('mouseenter', function() {
+      gsap.to(this, {
+        borderTopColor: '#c8a020',
+        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.08)',
+        duration: 0.3,
+        ease: 'power2.out',
+      });
+    });
+
+    step.addEventListener('mouseleave', function() {
+      gsap.to(this, {
+        borderTopColor: 'transparent',
+        boxShadow: 'none',
+        duration: 0.3,
+        ease: 'power2.out',
+      });
+    });
+  });
+}
+</script>
+</body>
+</html>

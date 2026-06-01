@@ -1,23 +1,11 @@
-import CustomCursor from '@/components/CustomCursor'
-import Navbar from '@/components/Navbar'
-import Hero from '@/components/Hero'
-import Services from '@/components/Services'
-import Work from '@/components/Work'
-import Process from '@/components/Process'
-import CTA from '@/components/CTA'
-import Footer from '@/components/Footer'
+import fs from 'fs'
+import path from 'path'
 
 export default function Home() {
+  const htmlPath = path.join(process.cwd(), 'public/index.html')
+  const htmlContent = fs.readFileSync(htmlPath, 'utf-8')
+
   return (
-    <main className="overflow-x-hidden">
-      <CustomCursor />
-      <Navbar />
-      <Hero />
-      <Services />
-      <Work />
-      <Process />
-      <CTA />
-      <Footer />
-    </main>
+    <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
   )
 }
