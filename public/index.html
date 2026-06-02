@@ -64,17 +64,35 @@ nav.scrolled{background:rgba(232,230,225,0.85);backdrop-filter:blur(24px);-webki
 .hero-social span{font-size:13px;color:var(--fg2)}
 
 .hero-right{position:relative;z-index:10;display:flex;align-items:flex-start;justify-content:flex-end;padding:100px 48px 0 0}
-.info-card{background:rgba(240,238,233,0.78);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.6);border-radius:20px;padding:20px;width:280px;box-shadow:0 8px 40px rgba(0,0,0,.08);opacity:0;transform:translateY(24px) scale(.97)}
+.info-card{background:rgba(240,238,233,0.78);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.6);border-radius:20px;padding:20px;width:280px;box-shadow:0 8px 40px rgba(0,0,0,.08);opacity:0;transform:translateY(24px) scale(.97); overflow:hidden;}
+.info-card::after{
+  content:'';
+  position:absolute;
+  left:0;
+  bottom:0;
+  height:2px;
+  width:0%;
+  background:#c8a020;
+}
 .card-thumb{width:56px;height:56px;border-radius:12px;background:#0a0a0a;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:#e8c547}
 .card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
 .card-step{font-size:11px;color:var(--muted);letter-spacing:.1em}
 .card-icon-btn{width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.06);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted);cursor:pointer}
 .card-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;line-height:1.15;letter-spacing:-.5px;color:var(--fg);margin-top:8px}
-.card-divider{height:1px;background:rgba(0,0,0,.08);margin:16px 0;position:relative}
-.card-divider::after{content:'';position:absolute;left:0;top:0;width:40%;height:1px;background:rgba(0,0,0,.25)}
+.card-divider{height:1px;background:rgba(0,0,0,.08);margin:16px 0;position:relative; overflow:hidden}
+.card-divider::after{content:'';position:absolute;left:0;top:0;width:40%;height:1px;background:#c8a020}
+.divider-progress{
+  position:absolute;
+  left:0;
+  top:0;
+  height:100%;
+  width:0%;
+  background:#c8a020;
+}
+
 .card-nav{display:flex;gap:8px;margin-top:4px}
-.card-nav-btn{width:30px;height:30px;border-radius:50%;border:1px solid rgba(0,0,0,.12);background:rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;color:var(--fg2);transition:background .2s}
-.card-nav-btn:hover{background:rgba(255,255,255,.9)}
+.card-nav-btn{width:30px;height:30px;border-radius:50%;border:1px solid rgba(0,0,0,.12);background:rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;color:var(--fg2);transition:.3s;}
+.card-nav-btn:hover{background:rgba(255,255,255,.9); transform:translateY(-2px);}
 
 .hero-partners{position:absolute;right:48px;bottom:120px;z-index:10;text-align:right;opacity:0}
 .partners-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
@@ -87,6 +105,8 @@ nav.scrolled{background:rgba(232,230,225,0.85);backdrop-filter:blur(24px);-webki
 .hero-bottom-item::before{content:'•';color:var(--muted)}
 
 .hero-wordmark{position:absolute;bottom:52px;left:50%;transform:translateX(-50%);z-index:5;font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(54px,15vw,150px);letter-spacing:-4px;color:transparent;-webkit-text-stroke:4.5px rgba(10,10,10,.08);white-space:nowrap;pointer-events:none;opacity:0}
+
+
 
 /* MARQUEE */
 .marquee-wrap{position:relative;z-index:2;padding:24px 0;border-top:1px solid rgba(0,0,0,.08);border-bottom:1px solid rgba(0,0,0,.08);overflow:hidden;background:rgba(232,230,225,1)}
@@ -314,7 +334,9 @@ footer{padding:40px 48px;border-top:1px solid rgba(10,10,10,.08);display:flex;ju
         </div>
       </div>
       <div class="card-title">Design to<br>explore.</div>
-      <div class="card-divider"></div>
+      <div class="card-divider">
+        <span class="divider-progress"></span>
+      </div>
       <div class="card-nav">
         <button class="card-nav-btn">←</button>
         <button class="card-nav-btn">→</button>
@@ -772,6 +794,109 @@ document.addEventListener('keydown',(e)=>{
     closeModal();
   }
 });
+
+
+// carousel 
+const slides = [
+  {
+    step: "01",
+    title: "Design to<br>explore.",
+    thumb: "Y"
+  },
+  {
+    step: "02",
+    title: "Build to<br>scale.",
+    thumb: "B"
+  },
+  {
+    step: "03",
+    title: "Launch to<br>grow.",
+    thumb: "L"
+  }
+];
+
+const title = document.querySelector(".card-title");
+const step = document.querySelector(".card-step");
+const thumb = document.querySelector(".card-thumb");
+
+const [prevBtn, nextBtn] = document.querySelectorAll(".card-nav-btn");
+
+let current = 0;
+function updateCard(direction = 1) {
+
+  const tl = gsap.timeline();
+
+  tl.to([
+    title,
+    step,
+    thumb
+  ], {
+    y: -20 * direction,
+    opacity: 0,
+    duration: 0.25,
+    stagger: 0.03,
+    ease: "power2.in"
+  });
+
+  tl.call(() => {
+
+    step.textContent = slides[current].step;
+    title.innerHTML = slides[current].title;
+    thumb.textContent = slides[current].thumb;
+
+  });
+
+  tl.fromTo(
+    [title, step, thumb],
+    {
+      y: 20 * direction,
+      opacity: 0
+    },
+    {
+      y: 0,
+      opacity: 1,
+      duration: 0.45,
+      stagger: 0.04,
+      ease: "power3.out"
+    }
+  );
+}
+
+nextBtn.addEventListener("click", () => {
+
+  current++;
+
+  if(current >= slides.length){
+    current = 0;
+  }
+
+  updateCard(1);
+
+});
+
+prevBtn.addEventListener("click", () => {
+
+  current--;
+
+  if(current < 0){
+    current = slides.length - 1;
+  }
+
+  updateCard(-1);
+
+});
+
+gsap.fromTo(
+  ".divider-progress",
+  { width: "0%" },
+  {
+    width: "100%",
+    duration: 4,
+    ease: "none"
+  }
+);
+
+
 </script>
 </body>
 </html>
