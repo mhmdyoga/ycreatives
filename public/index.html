@@ -822,6 +822,42 @@ const thumb = document.querySelector(".card-thumb");
 const [prevBtn, nextBtn] = document.querySelectorAll(".card-nav-btn");
 
 let current = 0;
+let autoSlide;
+
+function startAutoSlide() {
+
+  clearInterval(autoSlide);
+
+  autoSlide = setInterval(() => {
+
+    current++;
+
+    if(current >= slides.length){
+      current = 0;
+    }
+
+    updateCard(1);
+
+  }, 2000);
+
+}
+
+function animateProgress() {
+
+  gsap.killTweensOf(".divider-progress");
+
+  gsap.set(".divider-progress", {
+    width: "0%"
+  });
+
+  gsap.to(".divider-progress", {
+    width: "100%",
+    duration: 4,
+    ease: "none"
+  });
+
+}
+
 function updateCard(direction = 1) {
 
   const tl = gsap.timeline();
@@ -860,6 +896,9 @@ function updateCard(direction = 1) {
       ease: "power3.out"
     }
   );
+
+  // reset and animate progress bar
+  animateProgress();
 }
 
 nextBtn.addEventListener("click", () => {
@@ -871,7 +910,7 @@ nextBtn.addEventListener("click", () => {
   }
 
   updateCard(1);
-
+  startAutoSlide()
 });
 
 prevBtn.addEventListener("click", () => {
@@ -883,19 +922,12 @@ prevBtn.addEventListener("click", () => {
   }
 
   updateCard(-1);
+  startAutoSlide();
 
 });
 
-gsap.fromTo(
-  ".divider-progress",
-  { width: "0%" },
-  {
-    width: "100%",
-    duration: 4,
-    ease: "none"
-  }
-);
-
+animateProgress();
+startAutoSlide()
 
 </script>
 </body>
